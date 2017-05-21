@@ -1,36 +1,127 @@
-var words = ["frog", "giraffe", "snake", "tiger", "zebra", "elephant"];
-var alphabet = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"];
-var wins = 0;
-var computerWord = words[Math.floor(Math.random() * words.length)];
-var guessedLetters = [];
+window.onload = function () {
+
+	var alphabet = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"];
+
+	var categories;
+	var chosenCategory;
+	var word ;
+	var guess ;
+	var guesses = [ ];
+	var lives = 10;
+	var counter ;
+	var space ;
+
+	var showLives = document.getElementById("myLives");
+
+	selectCat = function () {
+		if (chosenCategory === categories[0]) {
+			categoryName.innerHTML = "The Chosen Category is Amphibians.";
+			document.getElementById("picture").innerHTML = '<img class="img img-responsive" id="amphibian" src="assets/images/amphibians.jpg">';
+		} else if (chosenCategory === categories[1]) {
+			categoryName.innerHTML = "The Chosen Category is Mammals.";
+			document.getElementById("picture").innerHTML = '<img class="img img-responsive" id="mammal" src="assets/images/mammal.jpg">';
+		} else if (chosenCategory === categories[2]) {
+			categoryName.innerHTML = "The Chosen Category is Reptiles.";
+			document.getElementById("picture").innerHTML = '<img class="img img-responsive" id="reptile" src="assets/images/reptile.jpg">';
+		}
+	}
+
+	//create guesses list
+	result = function () {
+		wordHolder = document.getElementById("holder");
+		correct = document.createElement("p");
+
+		for (var i = 0; i < word.length; i++) {
+			correct.setAttribute("id", "my-word");
+			guess = document.createElement("span");
+			guess.setAttribute("class", "guess");
+			if (word[i] === "-") {
+				guess.innerHTML = "-";
+				space = 1;
+			} else {
+				guess.innerHTML = " _ "
+			}
+
+			guesses.push(guess);
+			wordHolder.appendChild(correct);
+			correct.appendChild(guess);
+		}
+	}
+	
 
 
+	// track number of lives remaining
+	comments = function () {
+		showLives.innerHTML = "You have " + lives + " lives";
+		if (lives < 1) {
+			showLives.innerHTML = "Game Over";
+		}
+		for (var i=0; i <guesses.length; i++) {
+			if (counter + space === guesses.length) {
+				showLives.innerHTML = "You win!";
+			}
+		}
+	}
 
-//page loads and sets wins to 0 and displays first word
-window.onload = function() {
-	document.getElementById("wins").innerHTML = "<p>Wins: " + wins + "</p>";
-	document.getElementById("output").innerHTML = computerWord;
-}
+	check = function() {
+		document.onkeyup = function(event) {
+			var userGuess = String.fromCharCode(event.keyCode).toLowerCase(); 
 
-//user types letters and system checks against selected word
+			var k = (guesses.indexOf(userGuess));
+			if (k === -1) {
+				comments();
+			} else {
+				alert("You have already guessed " + userGuess + ". Try a different letter");
+			}
 
-//if letter is in word it is displayed on screen
+			guesses.push(userGuess);
 
-//users guesses are recorded on screen and duplicates not allowed
-document.onkeyup = function(event) {
-	var userGuess = event.key;
-	guessedLetters.push(userGuess);
+			for (var i = 0; i < word.length; i++) {
+				if (word[i] === userGuess) {
+				guesses[i].innerHTML = userGuess;
+				}
+			}
 
-	if (userGuess = alphabet) {
-	document.getElementById("guessed").innerHTML = guessedLetters;
+			var j = (word.indexOf(userGuess));
+			if (j === -1) {
+				lives -=1;
+				comments();
+			} else {
+				comments();
+			}
+		}
+	};
+
+
+	//playing the game
+	play = function () {
+		categories = [
+			["frog", "toad", "newt", "salamander"],
+			["giraffe", "zebra", "lion", "tiger"],
+			["snake", "lizard", "gecko"]
+			];
+
+		chosenCategory = categories[Math.floor(Math.random() * categories.length)];
+		word = chosenCategory[Math.floor(Math.random() * chosenCategory.length)];
+		word = word.replace(/\s/g, "-");
+
+		selectCat();
+		guesses = [];
+		lives = 10;
+		counter = 0;
+		space = 0;
+		result();
+		comments();
+		check();
+	}
+
+	play();
+
+	//Reset 
+
+	document.getElementById("reset").onclick = function() {
+		correct.parentNode.removeChild(correct);
+		play();
 	}
 }
-
-//incorrect guesses lower remaining guesses by one
-
-
-//user wins or loses and game resets while tracking results
-
-
-
 
